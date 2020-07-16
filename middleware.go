@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"path"
 	"strings"
 
@@ -33,9 +34,9 @@ func NewJWTMiddleware(jwks *jose.JSONWebKeySet, issuer string) JWTMiddleware {
 	}
 }
 
-func NewJWTMiddlewareFromOpenID(baseURL string) (*JWTMiddleware, error) {
+func NewJWTMiddlewareFromOpenID(baseURL url.URL) (*JWTMiddleware, error) {
 
-	resp, err := http.Get(path.Join(baseURL, "/.well-known/openid-configuration"))
+	resp, err := http.Get(path.Join(baseURL.String(), "/.well-known/openid-configuration"))
 	if err != nil {
 		return nil, err
 	}

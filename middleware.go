@@ -89,8 +89,10 @@ func GetJWKSetFromOpenidURL(JWKURL string) (*jose.JSONWebKeySet, error) {
 //TODO wrap errors
 func (mid *JWTMiddleware) JWTMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		bearerHeaderRaw := r.Header.Get("bearer")
+		bearerHeaderRaw := r.Header.Get("Authorization")
+		fmt.Print(bearerHeaderRaw)
 		bearerHeader := strings.Replace(bearerHeaderRaw, "Bearer ", "", 0)
+		fmt.Print(bearerHeader)
 		fmt.Println(bearerHeader)
 		//tok, err := jwt.ParseSigned(bearerHeader)
 

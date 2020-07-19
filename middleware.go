@@ -63,7 +63,7 @@ func NewJWTMiddlewareFromOpenID(baseURL string) (*JWTMiddleware, error) {
 		return nil, err
 	}
 
-	var bodyWellKnown OpenidWellKnown
+	var bodyWellKnown OpenIDWellKnown
 	err = json.Unmarshal(byteArr, &bodyWellKnown)
 	if err != nil {
 		return nil, err

@@ -1,4 +1,4 @@
-module github.com/fleetgurux/gojwt
+module github.com/johnfg2610/gojwt
 
 go 1.14
 

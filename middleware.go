@@ -147,12 +147,11 @@ func (mid *JWTMiddleware) Verifier(next http.Handler) http.Handler {
 		}
 		bearerHeader := strings.Replace(bearerHeaderRaw, "Bearer ", "", -1)
 		if mid.EnableDebug {
-			fmt.Println("Cleaned bearer token: " + bearerHeaderRaw)
+			fmt.Println("Cleaned bearer token: " + bearerHeader)
 		}
 
 		tok, err := jwt.ParseSigned(bearerHeader)
 
-		var claims *jwt.Claims
 		if err != nil {
 			if mid.EnableDebug {
 				fmt.Println("Error getting claims: " + err.Error())
@@ -162,6 +161,7 @@ func (mid *JWTMiddleware) Verifier(next http.Handler) http.Handler {
 			return
 		}
 
+		var claims *jwt.Claims
 		for _, jwk := range mid.JWKS.Keys {
 			err = tok.Claims(jwk, &claims)
 
@@ -182,6 +182,9 @@ func (mid *JWTMiddleware) Verifier(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), ContextJWTObject, tok)
 		ctx = context.WithValue(r.Context(), ContextJWTClaims, claims)
 
+		if mid.EnableDebug {
+			fmt.Println("Verifier passed, calling next http")
+		}
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -211,7 +214,9 @@ func (mid *JWTMiddleware) ClaimsValidator(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r.WithContext(ctx))
 			return
 		}
-
+		if mid.EnableDebug {
+			fmt.Println("Claims validator passed")
+		}
 		next.ServeHTTP(w, r)
 	})
 }
@@ -225,6 +230,10 @@ func (mid *JWTMiddleware) ClaimsTerminator(next http.Handler) http.Handler {
 			fmt.Println("Error was not nil: " + err.Error())
 			w.WriteHeader(http.StatusUnauthorized)
 			return
+		}
+
+		if mid.EnableDebug {
+			fmt.Println("Claims terminator passed")
 		}
 		next.ServeHTTP(w, r)
 	})

@@ -11,13 +11,16 @@ import (
 	"github.com/square/go-jose/v3/jwt"
 )
 
+//JWTResolver takes the values from a http request and returns either the JWTinfo or a error
 type JWTResolver func(w http.ResponseWriter, r *http.Request) (JWTInfo, error)
 
+//JWTInfo is used to store JWKs and issuers in context
 type JWTInfo struct {
 	JWKS   *jose.JSONWebKeySet
 	Issuer string
 }
 
+//JWTMiddleware is used to mange JWT middleware
 type JWTMiddleware struct {
 	JWTResolver JWTResolver
 }

@@ -100,6 +100,7 @@ func GetResolverErrorFromContext(ctx context.Context) (error, error) {
 	return err, nil
 }
 
+//GetJWTInfoFromContext will get JWTInfo from context using ContextJWTInfo
 func GetJWTInfoFromContext(ctx context.Context) (*JWTInfo, error) {
 	jwt, exists := ctx.Value(ContextJWTInfo).(*JWTInfo)
 	if !exists {

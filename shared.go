@@ -32,6 +32,42 @@ const (
 	ErrInvalidToken = "The token provided was invalid"
 )
 
+func GetJWTInfoFromOpenIDURL(OpenIDURL string) (*JWTInfo, error) {
+	wellknown, err := GetOpenIDConfigFromURL(OpenIDURL)
+	if err != nil {
+		return nil, err
+	}
+	keys, err := GetJWKSetFromOpenIDURL(wellknown.JWKSURL)
+	if err != nil {
+		return nil, err
+	}
+	jwtInfo := JWTInfo{
+		JWKS:   keys,
+		Issuer: wellknown.Issuer,
+	}
+	return &jwtInfo, nil
+}
+
+func GetOpenIDConfigFromURL(OpenIDURL string) (*OpenIDWellKnown, error) {
+	resp, err := http.Get(OpenIDURL)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, errors.New(resp.Status)
+	}
+	byteArr, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var bodyWellKnown OpenIDWellKnown
+	err = json.Unmarshal(byteArr, &bodyWellKnown)
+
+	return &bodyWellKnown, err
+}
+
 //GetJWKSetFromOpenIDURL creates a jsonwebkeyset from the JWK url provided
 func GetJWKSetFromOpenIDURL(JWKURL string) (*jose.JSONWebKeySet, error) {
 	resp, err := http.Get(JWKURL)

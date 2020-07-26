@@ -32,6 +32,7 @@ const (
 	ErrInvalidToken = "The token provided was invalid"
 )
 
+//GetJWTInfoFromOpenIDURL will take a openid url and return a JWTinfo
 func GetJWTInfoFromOpenIDURL(OpenIDURL string) (*JWTInfo, error) {
 	wellknown, err := GetOpenIDConfigFromURL(OpenIDURL)
 	if err != nil {
